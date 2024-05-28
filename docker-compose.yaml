@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  openldap:
+    image: ${OPENLDAP_IMAGE}
+    container_name: ${OPENLDAP_CONTAINER_NAME}
+    hostname: openldap
+    ports: 
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ./data/slapd/database:/var/lib/ldap
+      - ./data/slapd/config:/etc/ldap/slapd.d
+    environment: 
+      LDAP_ORGANISATION: ${LDAP_ORGANISATION}
+      LDAP_DOMAIN: ${LDAP_DOMAIN}
+      LDAP_ADMIN_USERNAME: ${LDAP_ADMIN_USERNAME}
+      LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD}
+      LDAP_CONFIG_PASSWORD: ${LDAP_CONFIG_PASSWORD}
+      LDAP_BASE_DN: ${LDAP_BASE_DN}
+      LDAP_READONLY_USER: ${LDAP_READONLY_USER}
+      LDAP_READONLY_USER_USERNAME: ${LDAP_READONLY_USER_USERNAME}
+      LDAP_READONLY_USER_PASSWORD: ${LDAP_READONLY_USER_PASSWORD}
+    networks:
+      - openldap
+
+  phpldapadmin:
+    image: ${PHPLDAPADMIN_IMAGE}
+    container_name: ${PHPLDAPADMIN_CONTAINER_NAME}
+    hostname: phpldapadmin
+    ports: 
+      - "80:80"
+    environment: 
+      PHPLDAPADMIN_LDAP_HOSTS: ${PHPLDAPADMIN_LDAP_HOSTS}
+      PHPLDAPADMIN_HTTPS: ${PHPLDAPADMIN_HTTPS}
+    depends_on:
+      - openldap
+    networks:
+      - openldap
+
+networks:
+  openldap:
+    driver: bridge
