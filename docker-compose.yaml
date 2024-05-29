@@ -41,3 +41,8 @@ services:
 networks:
   openldap:
     driver: bridge
+
+# Login DN => cn=admin,dc=example,dc=com 
+# Password: admin_user
+
+
